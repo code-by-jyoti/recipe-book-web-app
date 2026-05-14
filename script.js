@@ -1,0 +1,1 @@
+console.log("Recipe Book App Initialized");

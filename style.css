@@ -1,0 +1,121 @@
+body {
+    background-color: #293302;
+    font-family: 'Times New Roman', Times, serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Header */
+header {
+    background: linear-gradient(90deg, #8FB339, #A2C94F);
+    color: #ffffff;
+    text-align: center;
+    padding: 25px 15px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+    letter-spacing: 1px;
+}
+
+/* Home Section */
+.home-section {
+    background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.home-content {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    max-width: 500px;
+    width: 90%;
+    animation: fadeInHome 1s ease;
+}
+
+.home-content h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.home-content p {
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+}
+
+/* Buttons */
+.home-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.home-buttons button {
+    padding: 14px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+#goToAdd {
+    background-color: #8FB339;
+    color: white;
+}
+
+#goToView {
+    background-color: #FFD43B;
+    color: #333;
+}
+
+.home-buttons button:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+/* Animation */
+@keyframes fadeInHome {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+
+    .home-content {
+        padding: 25px;
+    }
+
+    .home-content h2 {
+        font-size: 1.6rem;
+    }
+
+    .home-content p {
+        font-size: 1rem;
+    }
+
+    .home-buttons button {
+        font-size: 1rem;
+        padding: 12px;
+    }
+}
