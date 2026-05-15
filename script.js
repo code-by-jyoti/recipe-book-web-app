@@ -17,6 +17,13 @@ const imageInput = document.getElementById("image");
 const recentContainer = document.querySelector(".recent-container");
 const cardsContainer = document.querySelector(".cards-container");
 
+const modal = document.getElementById("recipeModal");
+const modalName = document.getElementById("modalName");
+const modalImage = document.getElementById("modalImage");
+const modalIngredients = document.getElementById("modalIngredients");
+const modalSteps = document.getElementById("modalSteps");
+const closeModal = document.querySelector(".close");
+
 // --- Local Storage Data ---
 let recipes = JSON.parse(localStorage.getItem("recipes")) || [];
 
@@ -109,8 +116,8 @@ function displayRecipes() {
         return;
     }
 
-    recipes.forEach((recipe) => {
-        const card = createRecipeCard(recipe);
+    recipes.forEach((recipe, index) => {
+        const card = createRecipeCard(recipe, index);
         cardsContainer.appendChild(card);
     });
 }
@@ -133,10 +140,46 @@ function createRecipeCard(recipe) {
     const viewButton = document.createElement("button");
     viewButton.textContent = "View";
 
+    viewButton.addEventListener("click", () => {
+        showModal(recipe);
+    });
+
     buttonContainer.appendChild(viewButton);
     card.append(image, title, buttonContainer);
     return card;
 }
+
+// --- Show Modal ---
+
+function showModal(recipe) {
+    modalName.textContent = recipe.name;
+    modalImage.src = recipe.image;
+    modalIngredients.textContent = recipe.ingredients;
+
+    const stepsArray = recipe.steps
+        .split(/\r?\n|,/)
+        .map(step => step.trim())
+        .filter(Boolean);
+
+    modalSteps.innerHTML = stepsArray
+        .map((step, index) =>
+            `${index + 1}. ${step}`
+        )
+        .join("<br>");
+
+    modal.style.display = "block";
+}
+
+// --- Close Modal ---
+closeModal.addEventListener("click", () => {
+    modal.style.display = "none";
+});
+
+window.addEventListener("click", (event) => {
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+});
 
 // --- Initial Load ---
 displayRecentRecipe();
