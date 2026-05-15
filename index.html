@@ -48,8 +48,7 @@
                 <input type="text" id="name" placeholder="Enter recipe name" required autocomplete="off" />
 
                 <label for="ingredients">Ingredients</label>
-                <textarea id="ingredients" placeholder="List ingredients (comma separated)" required
-                    autocomplete="off"></textarea>
+                <textarea id="ingredients" placeholder="List ingredients (comma separated)" required autocomplete="off"></textarea>
 
                 <label for="steps">Preparation Steps</label>
                 <textarea id="steps" placeholder="Write preparation steps" required autocomplete="off"></textarea>
@@ -80,6 +79,23 @@
         <h2>All Recipes</h2>
         <div class="cards-container"></div>
     </section>
+
+     <!-- Recipe Modal -->
+    <div id="recipeModal" class="modal">
+
+        <div class="modal-content">
+
+            <span class="close">&times;</span>
+            <h2 id="modalName"></h2>
+            <img id="modalImage" src="" alt="Recipe image" />
+            <h3>Ingredients</h3>
+            <p id="modalIngredients"></p>
+            <h3>Preparation Steps</h3>
+            <p id="modalSteps"></p>
+
+        </div>
+        
+    </div>
 
     <script src="script.js"></script>
 </body>
