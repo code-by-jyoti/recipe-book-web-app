@@ -16,6 +16,7 @@ const stepsInput = document.getElementById("steps");
 const imageInput = document.getElementById("image");
 const recentContainer = document.querySelector(".recent-container");
 const cardsContainer = document.querySelector(".cards-container");
+const searchInput = document.getElementById("searchInput");
 
 const modal = document.getElementById("recipeModal");
 const modalName = document.getElementById("modalName");
@@ -26,6 +27,7 @@ const closeModal = document.querySelector(".close");
 
 // --- Local Storage Data ---
 let recipes = JSON.parse(localStorage.getItem("recipes")) || [];
+let editIndex = null;
 
 // --- Navigation ---
 goToAdd.addEventListener("click", () => {
@@ -49,11 +51,11 @@ function showViewPage() {
 function saveRecipes() {
     localStorage.setItem("recipes", JSON.stringify(recipes));
 
-    displayRecentRecepie();
+    displayRecentRecipe();
     displayRecipes();
 }
 
-// --- Add Recipe Functionality ---
+// --- Add or edit recipe ---
 recipeForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
@@ -67,27 +69,47 @@ recipeForm.addEventListener("submit", (event) => {
         return;
     }
 
-    if (!imageInput.files[0]) {
-        alert("Please upload a recipe image.");
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
+    const handleRecipeData = (imageSource) => {
         const recipeData = {
             name: nameInput.value.trim(),
             ingredients: ingredientsInput.value.trim(),
             steps: stepsInput.value.trim(),
-            image: reader.result
+            image: imageSource
         };
 
-        recipes.push(recipeData);
+        if (editIndex !== null) {
+            recipes[editIndex] = recipeData;
+            editIndex = null;
+            alert("Recipe updated successfully!");
+        }
+
+        else {
+            recipes.push(recipeData);
+            alert("Recipe added successfully!");
+        }
+
         saveRecipes();
         recipeForm.reset();
-        alert("Recipe added successfully!");
     };
 
-    reader.readAsDataURL(imageInput.files[0]);
+    if (imageInput.files[0]) {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            handleRecipeData(reader.result);
+        };
+
+        reader.readAsDataURL(imageInput.files[0]);
+    }
+
+    else if (editIndex !== null) {
+        handleRecipeData(recipes[editIndex].image);
+    }
+
+    else {
+        alert("Please upload a recipe image.");
+        return;
+    }
 });
 
 // --- Display Recent Recipe ---
@@ -99,31 +121,42 @@ function displayRecentRecipe() {
             "<p>No recent recipe added yet.</p>";
         return;
     }
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
     const latestRecipe = recipes[recipes.length - 1];
-    const card = createRecipeCard(latestRecipe);
+    const card = createRecipeCard(latestRecipe, recipes.length - 1);
 
     recentContainer.appendChild(card);
 }
 
 // --- Display All Recipes ---
-function displayRecipes() {
+function displayRecipes(filter = "") {
     cardsContainer.innerHTML = "";
 
-    if (recipes.length === 0) {
+    const filteredRecipes = recipes.filter(recipe => {
+        return (
+            recipe.name
+                .toLowerCase()
+                .includes(filter.toLowerCase()) ||
+            recipe.ingredients
+                .toLowerCase()
+                .includes(filter.toLowerCase())
+        );
+    });
+
+    if (filteredRecipes.length === 0) {
         cardsContainer.innerHTML =
             "<p>No recipes found!</p>";
         return;
     }
 
-    recipes.forEach((recipe, index) => {
+    filteredRecipes.forEach((recipe, index) => {
         const card = createRecipeCard(recipe, index);
         cardsContainer.appendChild(card);
     });
 }
 
 // --- Create Recipe Card ---
-function createRecipeCard(recipe) {
+function createRecipeCard(recipe, index) {
     const card = document.createElement("div");
     card.className = "recipe-card";
 
@@ -137,14 +170,35 @@ function createRecipeCard(recipe) {
     const buttonContainer = document.createElement("div");
     buttonContainer.className = "card-buttons";
 
+    // View button
     const viewButton = document.createElement("button");
     viewButton.textContent = "View";
+
+    viewButton.className = "view-btn";
 
     viewButton.addEventListener("click", () => {
         showModal(recipe);
     });
 
-    buttonContainer.appendChild(viewButton);
+    // Edit Button
+    const editButton = document.createElement("button");
+    editButton.textContent = "Edit";
+    editButton.className = "edit-btn";
+
+    editButton.addEventListener("click", () => {
+        editRecipe(index);
+    });
+
+    // Delete Button
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.className = "delete-btn";
+
+    deleteButton.addEventListener("click", () => {
+        deleteRecipe(index);
+    });
+
+    buttonContainer.append(viewButton, editButton, deleteButton);
     card.append(image, title, buttonContainer);
     return card;
 }
@@ -179,6 +233,47 @@ window.addEventListener("click", (event) => {
     if (event.target === modal) {
         modal.style.display = "none";
     }
+});
+
+// --- Edit Recipe ---
+function editRecipe(index) {
+    const recipe = recipes[index];
+
+    nameInput.value = recipe.name;
+    ingredientsInput.value = recipe.ingredients;
+    stepsInput.value = recipe.steps;
+    imageInput.value = "";
+
+    editIndex = index;
+
+    homePage.style.display = "none";
+    appContent.style.display = "block";
+    viewRecipesPage.style.display = "none";
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+// --- Delete Recipe ---
+function deleteRecipe(index) {
+    const confirmDelete = confirm(
+        "Are you sure you want to delete this recipe?"
+    );
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    recipes.splice(index, 1);
+    saveRecipes();
+    alert("Recipe deleted successfully!");
+}
+
+// --- Search ---
+searchInput.addEventListener("input", (event) => {
+    displayRecipes(event.target.value);
 });
 
 // --- Initial Load ---

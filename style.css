@@ -277,6 +277,56 @@ button:hover {
     }
 }
 
+/* Search Section */
+#searchInput {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
+/* Card Buttons */
+.card-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+    gap: 8px;
+}
+
+.card-buttons button {
+    flex: 1;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+/* Buttons Colors */
+.view-btn {
+    background-color: #8FB339;
+    color: white;
+}
+
+.edit-btn {
+    background-color: #FFD43B;
+    color: #333;
+}
+
+.delete-btn {
+    background-color: #FF4C4C;
+    color: white;
+}
+
+.card-buttons button:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
 
