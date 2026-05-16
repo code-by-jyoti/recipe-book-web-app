@@ -15,6 +15,9 @@
         <h1>Recipe Book</h1>
     </header>
 
+    <!-- Back Button -->
+     <button id="backBtn">← Back</button>
+
     <!-- Home Page -->
     <section id="homePage" class="home-section">
         <div class="home-content">
@@ -92,13 +95,21 @@
 
         <div class="modal-content">
 
-            <span class="close">&times;</span>
+            <span class="close" role="button" aria-label="Close">&times;</span>
             <h2 id="modalName"></h2>
             <img id="modalImage" src="" alt="Recipe image" />
             <h3>Ingredients</h3>
             <p id="modalIngredients"></p>
             <h3>Preparation Steps</h3>
             <p id="modalSteps"></p>
+
+            <!-- Comments -->
+             <h3>Comments</h3>
+
+            <div class="comments-container"></div>
+            
+            <input type="text" id="commentInput" placeholder="Add a comment..." />
+            <button id="addCommentBtn">Add Comment</button>
 
         </div>
         
