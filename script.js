@@ -23,29 +23,78 @@ const modalName = document.getElementById("modalName");
 const modalImage = document.getElementById("modalImage");
 const modalIngredients = document.getElementById("modalIngredients");
 const modalSteps = document.getElementById("modalSteps");
+const commentInput = document.getElementById("commentInput");
+const addCommentBtn = document.getElementById("addCommentBtn");
 const closeModal = document.querySelector(".close");
 
 // --- Local Storage Data ---
 let recipes = JSON.parse(localStorage.getItem("recipes")) || [];
 let editIndex = null;
+let currentUser = "You";
+let currentModalIndex = null;
 
-// --- Navigation ---
-goToAdd.addEventListener("click", () => {
+// --- Back Button ---
+function updateBackBtn() {
+    const isHomePageVisible = homePage.style.display !== "none";
+
+    backBtn.style.display = isHomePageVisible ? "none" : "block";
+}
+
+function showAddPage(addHistory = true) {
     homePage.style.display = "none";
     appContent.style.display = "block";
     viewRecipesPage.style.display = "none";
-});
 
-goToView.addEventListener("click", showViewPage);
-viewAllBtn.addEventListener("click", showViewPage);
+    updateBackBtn();
 
-function showViewPage() {
+    if (addHistory) {
+        history.pushState({ page: "add" }, "", "#add");
+    }
+}
+
+function showViewPage(addHistory = true) {
     homePage.style.display = "none";
     appContent.style.display = "none";
     viewRecipesPage.style.display = "block";
 
     displayRecipes();
+    updateBackBtn();
+
+    if (addHistory) {
+        history.pushState({ page: "view" }, "", "#view");
+    }
 }
+
+
+// --- Navigation ---
+goToAdd.addEventListener("click", showAddPage);
+
+goToView.addEventListener("click", showViewPage);
+
+viewAllBtn.addEventListener("click", showViewPage);
+
+backBtn.addEventListener("click", () => {
+    window.history.back();
+});
+
+window.addEventListener("popstate", (event) => {
+
+    if (!event.state) {
+        homePage.style.display = "flex";
+        appContent.style.display = "none";
+        viewRecipesPage.style.display = "none";
+    }
+
+    else if (event.state.page === "add") {
+        showAddPage(false);
+    }
+
+    else if (event.state.page === "view") {
+        showViewPage(false);
+    }
+
+    updateBackBtn();
+});
 
 // --- Save Recipes Function ---
 function saveRecipes() {
@@ -74,10 +123,15 @@ recipeForm.addEventListener("submit", (event) => {
             name: nameInput.value.trim(),
             ingredients: ingredientsInput.value.trim(),
             steps: stepsInput.value.trim(),
-            image: imageSource
+            image: imageSource,
+            user: currentUser,
+            comments: []
         };
 
         if (editIndex !== null) {
+            recipeData.user = recipes[editIndex].user;
+            recipeData.comments =recipes[editIndex].comments || [];
+
             recipes[editIndex] = recipeData;
             editIndex = null;
             alert("Recipe updated successfully!");
@@ -177,35 +231,41 @@ function createRecipeCard(recipe, index) {
     viewButton.className = "view-btn";
 
     viewButton.addEventListener("click", () => {
-        showModal(recipe);
+        showModal(recipe, index);
     });
 
-    // Edit Button
-    const editButton = document.createElement("button");
-    editButton.textContent = "Edit";
-    editButton.className = "edit-btn";
+    buttonContainer.appendChild(viewButton);
 
-    editButton.addEventListener("click", () => {
-        editRecipe(index);
-    });
+    // Owner Buttons
+    if(recipe.user === currentUser) {
+        const editButton = document.createElement("button");
+        editButton.textContent = "Edit";
+        editButton.className = "edit-btn";
 
-    // Delete Button
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-    deleteButton.className = "delete-btn";
+        editButton.addEventListener("click", () => {
+            editRecipe(index);
+        });
 
-    deleteButton.addEventListener("click", () => {
-        deleteRecipe(index);
-    });
+        // Delete Button
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.className = "delete-btn";
 
-    buttonContainer.append(viewButton, editButton, deleteButton);
+        deleteButton.addEventListener("click", () => {
+            deleteRecipe(index);
+        });
+
+        buttonContainer.append(editButton, deleteButton);
+    }
+
     card.append(image, title, buttonContainer);
     return card;
 }
 
 // --- Show Modal ---
 
-function showModal(recipe) {
+function showModal(recipe, index) {
+    currentModalIndex = index;
     modalName.textContent = recipe.name;
     modalImage.src = recipe.image;
     modalIngredients.textContent = recipe.ingredients;
@@ -221,6 +281,8 @@ function showModal(recipe) {
         )
         .join("<br>");
 
+    displayComments(recipe);
+
     modal.style.display = "block";
 }
 
@@ -235,6 +297,45 @@ window.addEventListener("click", (event) => {
     }
 });
 
+// --- Comments System ---
+function displayComments(recipe) {
+
+    const commentsContainer = modal.querySelector(".comments-container");
+    
+    commentsContainer.innerHTML = "";
+    
+    if (!recipe.comments || recipe.comments.length === 0) {
+        commentsContainer.innerHTML = "<p>No comments yet.</p>";
+        
+        return;
+    }
+
+    recipe.comments.forEach(comment => {
+        const commentElement = document.createElement("p");
+        
+        commentElement.textContent = `${comment.user}: ${comment.text}`;
+        commentsContainer.appendChild(commentElement);
+    });
+}
+
+addCommentBtn.addEventListener("click", () => {
+    const commentText = commentInput.value.trim();
+    
+    if (!commentText || currentModalIndex === null) return;
+    
+    // Create comments array if missing
+    if (!recipes[currentModalIndex].comments) {
+        recipes[currentModalIndex].comments = [];
+    }
+
+    recipes[currentModalIndex].comments.push({ user: currentUser, text: commentText });
+    
+    saveRecipes();
+    
+    displayComments(recipes[currentModalIndex]);
+    commentInput.value = "";
+});
+
 // --- Edit Recipe ---
 function editRecipe(index) {
     const recipe = recipes[index];
@@ -246,9 +347,7 @@ function editRecipe(index) {
 
     editIndex = index;
 
-    homePage.style.display = "none";
-    appContent.style.display = "block";
-    viewRecipesPage.style.display = "none";
+    showAddPage();
 
     window.scrollTo({
         top: 0,
@@ -279,3 +378,4 @@ searchInput.addEventListener("input", (event) => {
 // --- Initial Load ---
 displayRecentRecipe();
 displayRecipes();
+updateBackBtn();
