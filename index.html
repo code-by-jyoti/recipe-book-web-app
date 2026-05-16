@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recipe Book</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Recipe Book</h1>
+    </header>
+
+    <!-- Back Button -->
+     <button id="backBtn">← Back</button>
+
+    <!-- Home Page -->
+    <section id="homePage" class="home-section">
+        <div class="home-content">
+            <h2>Welcome to Your Recipe Book 🍲</h2>
+
+            <p>
+                Store, view, and manage your favorite recipes —
+                all in one place!
+            </p>
+
+            <div class="home-buttons">
+                <button id="goToAdd">
+                    Click here to add Recipe
+                </button>
+
+                <button id="goToView">
+                    📖 View Recipes
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Recipe Section -->
+    <main id="appContent" style="display: none;">
+        <section class="form-section">
+            <h2>Add a Recipe</h2>
+
+            <form id="recipeForm">
+
+                <label for="name">Recipe Name</label>
+                <input type="text" id="name" placeholder="Enter recipe name" required autocomplete="off" />
+
+                <label for="ingredients">Ingredients</label>
+                <textarea id="ingredients" placeholder="List ingredients (comma separated)" required autocomplete="off"></textarea>
+
+                <label for="steps">Preparation Steps</label>
+                <textarea id="steps" placeholder="Write preparation steps" required autocomplete="off"></textarea>
+
+                <label for="image">Recipe Image</label>
+                <input type="file" id="image" accept="image/*" />
+
+                <button type="submit">Add Recipe</button>
+
+            </form>
+
+            <!-- Recently Added -->
+            <div class="recent-recipes">
+                <h3>Recently Added</h3>
+                <div class="recent-container"></div>
+            </div>
+
+            <button id="viewAllBtn">
+                View All Recipes
+            </button>
+
+        </section>
+
+    </main>
+
+    <!-- View Recipes Page -->
+    <section id="viewRecipesPage" style="display: none;">
+        <h2>All Recipes</h2>
+
+        <!-- Search -->
+        <div class="search-section">
+            <h3>Search Recipes</h3>
+            <input type="text" id="searchInput" placeholder="Type to search by name or ingredient..." autocomplete="off" />
+        </div>
+
+        <div class="cards-container"></div>
+    </section>
+
+     <!-- Recipe Modal -->
+    <div id="recipeModal" class="modal">
+
+        <div class="modal-content">
+
+            <span class="close" role="button" aria-label="Close">&times;</span>
+            <h2 id="modalName"></h2>
+            <img id="modalImage" src="" alt="Recipe image" />
+            <h3>Ingredients</h3>
+            <p id="modalIngredients"></p>
+            <h3>Preparation Steps</h3>
+            <p id="modalSteps"></p>
+
+            <!-- Comments -->
+             <h3>Comments</h3>
+
+            <div class="comments-container"></div>
+            
+            <input type="text" id="commentInput" placeholder="Add a comment..." />
+            <button id="addCommentBtn">Add Comment</button>
+
+        </div>
+        
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
