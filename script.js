@@ -237,7 +237,7 @@ function createRecipeCard(recipe, index) {
     buttonContainer.appendChild(viewButton);
 
     // Owner Buttons
-    if(recipe.user === currentUser) {
+    if(!recipe.user || recipe.user === currentUser) {
         const editButton = document.createElement("button");
         editButton.textContent = "Edit";
         editButton.className = "edit-btn";
